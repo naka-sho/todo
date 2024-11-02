@@ -1,7 +1,7 @@
 package com.example.todo.controller;
 
 import com.example.todo.model.Todo;
-import com.example.todo.mapper.TodoMapper;
+import com.example.todo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,24 +13,24 @@ import java.util.List;
 public class TodoController {
 
     @Autowired
-    private TodoMapper todoMapper;
+    private TodoService todoService;
 
     @GetMapping("/")
     public String listTodos(Model model) {
-        List<Todo> todos = todoMapper.findAll();
+        List<Todo> todos = todoService.listTodos();
         model.addAttribute("todos", todos);
         return "todo/list";
     }
 
     @PostMapping("/add")
     public String addTodo(@ModelAttribute Todo todo) {
-        todoMapper.insert(todo);
+        todoService.addTodo(todo);
         return "redirect:/";
     }
 
     @GetMapping("/edit/{id}")
     public String editTodoForm(@PathVariable Long id, Model model) {
-        Todo todo = todoMapper.findById(id);
+        Todo todo = todoService.getTodoById(id);
         model.addAttribute("todo", todo);
         return "todo/edit";
     }
@@ -38,13 +38,13 @@ public class TodoController {
     @PostMapping("/edit/{id}")
     public String editTodo(@PathVariable Long id, @ModelAttribute Todo todo) {
         todo.setId(id);
-        todoMapper.update(todo);
+        todoService.updateTodo(todo);
         return "redirect:/";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteTodo(@PathVariable Long id) {
-        todoMapper.delete(id);
+        todoService.deleteTodoById(id);
         return "redirect:/";
     }
 }
